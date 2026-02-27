@@ -155,6 +155,35 @@ const styles = `
 
   .nav-desktop { display: none; }
   @media (min-width: 900px) { .nav-desktop { display: flex; align-items: center; gap: 28px; } .nav-desktop-link { background: none; border: none; cursor: pointer; font-family: 'Crimson Pro', serif; font-size: 0.9rem; letter-spacing: 0.08em; color: var(--muted); transition: color 0.2s; padding: 0; } .nav-desktop-link:hover { color: var(--parchment); } .nav-hamburger { display: none !important; } }
+  /* ── NOTIFY MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    z-index: 300; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: #1a0d04;
+    border: 1px solid rgba(196,154,56,0.25);
+    border-top: 3px solid var(--gold);
+    border-radius: 2px;
+    padding: 32px 28px;
+    width: 100%; max-width: 440px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.8);
+    transform: translateY(12px);
+    transition: transform 0.25s ease;
+    position: relative;
+  }
+  .modal-overlay.open .modal-box { transform: translateY(0); }
+  .modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 1.3rem; line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--parchment); }
   .error-msg { color: #c0392b; font-family: 'Crimson Pro', serif; font-size: 0.82rem; margin-top: 6px; }
 `;
 
@@ -234,6 +263,14 @@ export default function PaperTrail() {
   const [pledgeLoading, setPledgeLoading] = useState(false);
   const [pledgeError, setPledgeError]     = useState("");
 
+  // Notify modal
+  const [notifyOpen, setNotifyOpen]       = useState(false);
+  const [notifyEp, setNotifyEp]           = useState(null);
+  const [notifyForm, setNotifyForm]       = useState({ name: "", email: "" });
+  const [notifySent, setNotifySent]       = useState(false);
+  const [notifyLoading, setNotifyLoading] = useState(false);
+  const [notifyError, setNotifyError]     = useState("");
+
   const progress = Math.min((raised / CAMPAIGN.goal) * 100, 100);
 
   const scrollTo = (id) => {
@@ -275,6 +312,28 @@ export default function PaperTrail() {
   }
 
   // ── SUB-COMPONENTS ───────────────────────────────────────
+
+  async function handleNotify() {
+    if (!notifyForm.name || !notifyForm.email) { setNotifyError("Name and email are required."); return; }
+    setNotifyLoading(true); setNotifyError("");
+    const res = await submitToFormspree(FORMSPREE.notify, {
+      name: notifyForm.name,
+      email: notifyForm.email,
+      episode: notifyEp ? `${notifyEp.number}: ${notifyEp.title}` : "All episodes",
+      _subject: `Notify me: ${notifyEp ? notifyEp.title : "All episodes"} — ${notifyForm.name}`,
+    });
+    setNotifyLoading(false);
+    if (res.ok) setNotifySent(true);
+    else setNotifyError("Something went wrong. Please try again.");
+  }
+
+  function openNotify(ep) {
+    setNotifyEp(ep);
+    setNotifyForm({ name: "", email: "" });
+    setNotifySent(false);
+    setNotifyError("");
+    setNotifyOpen(true);
+  }
 
   const FilterChips = () => (
     <div className="filter-row">
@@ -478,7 +537,7 @@ export default function PaperTrail() {
                         <div style={{ display: "flex", gap: "10px", marginTop: "14px" }}>
                           {state === "watch_now"
                             ? <button className="support-btn" style={{ color: "var(--cream)", padding: "9px 20px", borderRadius: "2px", fontSize: "0.75rem" }}>▶ Watch Now</button>
-                            : <button className="ghost-btn" style={{ padding: "8px 18px", borderRadius: "2px", fontSize: "0.82rem" }}>Notify Me</button>
+                            : <button className="ghost-btn" style={{ padding: "8px 18px", borderRadius: "2px", fontSize: "0.82rem" }} onClick={() => openNotify(ep)}>Notify Me</button>
                           }
                         </div>
                       </div>
@@ -701,6 +760,42 @@ export default function PaperTrail() {
           <p className="font-body" style={{ color: "var(--sepia-light)", fontSize: "0.7rem", letterSpacing: "0.1em" }}>© 2025 The Paper Trail Documentary Series</p>
         </div>
       </footer>
+      {/* NOTIFY MODAL */}
+      <div className={`modal-overlay ${notifyOpen ? "open" : ""}`} onClick={e => { if (e.target.classList.contains("modal-overlay")) { setNotifyOpen(false); } }}>
+        <div className="modal-box">
+          <button className="modal-close" onClick={() => setNotifyOpen(false)}>✕</button>
+          <p className="font-fell" style={{ color: "var(--rust)", fontSize: "0.65rem", letterSpacing: "0.35em", marginBottom: "10px" }}>STAY INFORMED</p>
+          <h3 className="font-display" style={{ color: "var(--parchment)", fontSize: "1.4rem", fontWeight: 700, marginBottom: "6px", lineHeight: 1.2 }}>
+            {notifyEp ? notifyEp.title : "The Paper Trail"}
+          </h3>
+          <p className="font-body" style={{ color: "var(--muted)", fontSize: "0.92rem", lineHeight: 1.6, marginBottom: "20px" }}>
+            {notifyEp
+              ? `Be the first to know when ${notifyEp.number} drops. We'll reach out when it's ready.`
+              : "Be the first to know when new episodes drop."}
+          </p>
+          <hr style={{ border: "none", borderTop: "1px solid rgba(196,154,56,0.12)", marginBottom: "20px" }} />
+          {!notifySent ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <input className="loi-input" placeholder="Your name" value={notifyForm.name}
+                onChange={e => { setNotifyForm(p => ({ ...p, name: e.target.value })); setNotifyError(""); }}
+                style={{ background: "rgba(90,60,20,0.12)", color: "var(--parchment)" }} />
+              <input className="loi-input" placeholder="Email address" value={notifyForm.email}
+                onChange={e => { setNotifyForm(p => ({ ...p, email: e.target.value })); setNotifyError(""); }}
+                style={{ background: "rgba(90,60,20,0.12)", color: "var(--parchment)" }} />
+              {notifyError && <p className="error-msg">{notifyError}</p>}
+              <button className="support-btn" style={{ color: "var(--cream)", padding: "13px 0", borderRadius: "2px", fontSize: "0.78rem", width: "100%", marginTop: "4px" }}
+                onClick={handleNotify} disabled={notifyLoading}>
+                {notifyLoading ? "Submitting…" : "Notify Me"}
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "16px", background: "rgba(139,37,0,0.08)", border: "1px solid rgba(139,37,0,0.3)", borderRadius: "2px" }}>
+              <span className="font-display" style={{ color: "var(--rust)" }}>✦</span>
+              <span className="font-body" style={{ color: "var(--parchment)", fontSize: "1rem" }}>You're on the list. We'll be in touch.</span>
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 }
