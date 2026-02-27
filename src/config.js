@@ -8,17 +8,17 @@
 // Sign up at https://formspree.io, create a form, paste your form ID below.
 // It looks like: https://formspree.io/f/xyzabcde  →  use "xyzabcde"
 export const FORMSPREE = {
-  loi:      "YOUR_LOI_FORM_ID",       // Letter of Inquiry form
-  pledge:   "YOUR_PLEDGE_FORM_ID",    // Public pledge form
-  streaming:"YOUR_STREAMING_FORM_ID", // Streaming interest form
-  notify:   "YOUR_NOTIFY_FORM_ID",    // Episode notify me form
+  loi:      "xwvnzrpr",       // Letter of Inquiry form
+  pledge:   "mzdawjdz",    // Public pledge form
+  streaming: "meeldree", // Streaming interest form
+  notify:   "xwvnzrwq",    // Episode notify me form
 };
 
 // ── CAMPAIGN ───────────────────────────────────────────────
 export const CAMPAIGN = {
   goal:       25000,
-  raised:     8740,   // Update this as real pledges come in
-  backers:    143,
+  raised:     0,   // Update this as real pledges come in
+  backers:    0,
 };
 
 // ── SUBJECTS ───────────────────────────────────────────────
