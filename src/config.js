@@ -8,9 +8,9 @@
 // Sign up at https://formspree.io, create a form, paste your form ID below.
 // It looks like: https://formspree.io/f/xyzabcde  →  use "xyzabcde"
 export const FORMSPREE = {
-  loi:      "YOUR_LOI_FORM_ID",       // Letter of Inquiry form
-  pledge:   "YOUR_PLEDGE_FORM_ID",    // Public pledge form
-  streaming:"YOUR_STREAMING_FORM_ID", // Streaming interest form
+  loi:      "xwvnzrpr",       // Letter of Inquiry form
+  pledge:   "mzdawjdzD",    // Public pledge form
+  streaming:"meeldree", // Streaming interest form
 };
 
 // ── CAMPAIGN ───────────────────────────────────────────────
