@@ -1,28 +1,35 @@
 // ============================================================
 //  THE PAPER TRAIL — SITE CONFIG
-//  Edit this file to update content, emails, and videos.
+//  Edit this file to update all content, emails, and videos.
 //  You should rarely need to touch any other file.
 // ============================================================
 
-// ── EMAIL ──────────────────────────────────────────────────
-// Sign up at https://formspree.io, create a form, paste your form ID below.
-// It looks like: https://formspree.io/f/xyzabcde  →  use "xyzabcde"
+// ── STRIPE PAYMENT ─────────────────────────────────────────
+// Sign up at https://stripe.com → Dashboard → Payment Links → Create
+// Add a product called "Support The Paper Trail" with custom amount
+// Paste the full URL here (looks like https://buy.stripe.com/xxxxx)
+export const STRIPE_URL = "YOUR_STRIPE_PAYMENT_LINK";
+
+// ── EMAIL (FORMSPREE) ───────────────────────────────────────
+// Sign up at https://formspree.io, create a form for each below.
+// Each form gives you a URL like https://formspree.io/f/xyzabcde
+// Paste just the ID part (xyzabcde) below.
 export const FORMSPREE = {
-  loi:      "xwvnzrpr",       // Letter of Inquiry form
-  pledge:   "mzdawjdz",    // Public pledge form
-  streaming: "meeldree", // Streaming interest form
-  notify:   "xwvnzrwq",    // Episode notify me form
+  loi:      "YOUR_LOI_FORM_ID",       // Letter of Inquiry form
+  pledge:   "YOUR_PLEDGE_FORM_ID",    // (legacy — Stripe handles payments now)
+  streaming:"YOUR_STREAMING_FORM_ID", // Streaming interest form
+  notify:   "YOUR_NOTIFY_FORM_ID",    // Episode notify me form
 };
 
 // ── CAMPAIGN ───────────────────────────────────────────────
+// Update raised and backers as real donations come in
 export const CAMPAIGN = {
   goal:       25000,
-  raised:     0,   // Update this as real pledges come in
-  backers:    0,
+  raised:     8740,
+  backers:    143,
 };
 
 // ── SUBJECTS ───────────────────────────────────────────────
-// color: pick any CSS hex color for each subject's accent
 export const SUBJECTS = {
   willis: {
     name:    "Willis Henry Willoughby",
@@ -74,7 +81,7 @@ export const EPISODES = [
     number:      "Ep. 01",
     title:       "From Lowndes",
     status:      "coming_soon",
-    videoUrl:    null, // paste embed URL here when ready
+    videoUrl:    null,
     description: "Born enslaved in Alabama's Black Belt in 1848, Willis Henry Willoughby survived Reconstruction, migrated south, and built a life in Marion County, Florida — buying land and founding a church. The archive opens here.",
   },
   {
